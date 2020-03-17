@@ -188,10 +188,10 @@ class CarInterface(CarInterfaceBase):
         # stock filter output values:     0x00c0, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a
         # modified filter output values:  0x00c0, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x0400, 0x0480
         # note: max request allowed is 4096, but request is capped at 3840 in firmware, so modifications result in 2x max
-        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2564, 8000], [0, 2564, 3840]]
-        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.1]]
+        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2566, 8000], [0, 2566, 3840]]
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.4], [0.12]]
       else:
-        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2564], [0, 2564]]
+        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2566], [0, 2566]]
         ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.8], [0.24]]
       tire_stiffness_factor = 1.
       ret.longitudinalTuning.kpBP = [0., 5., 35.]
