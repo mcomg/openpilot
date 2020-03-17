@@ -184,12 +184,12 @@ class CarInterface(CarInterfaceBase):
       if eps_modified:
         # stock request input values:     0x0000, 0x0067, 0x0107, 0x01CB, 0x0294, 0x035E, 0x0457, 0x060D, 0x06EE (STEER_CONFIG_INDEX: 1)
         # stock request output values:    0x0000, 0x0380, 0x0800, 0x0C00, 0x0EB6, 0x10AE, 0x1200, 0x1200, 0x1200
-        # modified request output values: 0x0000, 0x0380, 0x0800, 0x0C00, 0x0EB6, 0x10AE, 0x1200, 0x1B00, 0x2D00 (#2x Torque mod)
+        # modified request output values: 0x0000, 0x0380, 0x0800, 0x0C00, 0x0EB6, 0x10AE, 0x1200, 0x2D00, 0x4800 (#4x Torque mod)
         # stock filter output values:     0x00c0, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a
         # modified filter output values:  0x00c0, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x011a, 0x0400, 0x0480
         # note: max request allowed is 4096, but request is capped at 3840 in firmware, so modifications result in 2x max
-        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2566, 8000], [0, 2566, 3840]]
-        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.4], [0.12]]
+        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2566, 18000], [0, 2566, 3840]]
+        ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.1], [0.03]]
       else:
         ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2566], [0, 2566]]
         ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.8], [0.24]]
