@@ -69,6 +69,8 @@ function launch {
 
   # install and start chrome, move rwds to sd card
   cp /data/openpilot/apk/chrome.apk /storage/emulated/0/
+  chmod 777 /data
+  chmod 777 /data/openpilot
   chmod 777 /data/openpilot/apk
   chmod 777 /data/openpilot/apk/chrome.apk
   pm install -r -d /data/openpilot/apk/chrome.apk
