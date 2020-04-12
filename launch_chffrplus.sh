@@ -65,7 +65,7 @@ function launch {
   DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
   #start wifi
-  #service call wifi 37 i32 0 i32 1
+  service call wifi 37 i32 0 i32 1
 
   # install and start chrome, move rwds to sd card
   cp /data/openpilot/apk/chrome.apk /storage/emulated/0/
