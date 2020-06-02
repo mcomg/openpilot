@@ -183,7 +183,7 @@ class CarInterface(CarInterfaceBase):
       ret.wheelbase = CivicParams.WHEELBASE
       ret.centerToFront = CivicParams.CENTER_TO_FRONT
       ret.steerRatio = 15.38  # 10.93 is end-to-end spec
-            if eps_modified:
+      if eps_modified:
         # stock request input values:     0x0000, 0x0067, 0x0107, 0x01CB, 0x0294, 0x035E, 0x0457, 0x060D, 0x06EE (STEER_CONFIG_INDEX: 1)
         # stock request output values:    0x0000, 0x0380, 0x0800, 0x0C00, 0x0EB6, 0x10AE, 0x1200, 0x1200, 0x1200
         # modified request output values: 0x0000, 0x0380, 0x0800, 0x0C00, 0x0EB6, 0x10AE, 0x1200, 0x1F80, 0x2D00 (#2x Torque mod)
