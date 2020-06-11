@@ -6,7 +6,7 @@ from cereal import log
 
 class LatControlPID():
   def __init__(self, CP):
-    self.factor = 1
+    self.factor = 1.
 
     self.lowpid = PIController((CP.lateralTuning.pid.kpBP, CP.lateralTuning.pid.kpV),
                             (CP.lateralTuning.pid.kiBP, CP.lateralTuning.pid.kiV),
@@ -25,12 +25,13 @@ class LatControlPID():
     self.increasing = False
 
   def dualPIDinit(self, CP):
-    self.factor = CP.lateralTuning.pid.kpV[1] / CP.lateralTuning.pid.kpV[0]
+    self.factor = CP.lateralParams.torqueBP[1] / CP.lateralParams.torqueBP[-1]
+
     self.highkpV = CP.lateralTuning.pid.kpV[1]
     self.highkiV = CP.lateralTuning.pid.kiV[1]
 
-    self.lowpid = PIController((CP.lateralTuning.pid.kpBP, CP.lateralTuning.pid.kpV),
-                            (CP.lateralTuning.pid.kiBP, CP.lateralTuning.pid.kiV),
+    self.lowpid = PIController((CP.lateralTuning.pid.kpBP, [CP.lateralTuning.pid.kpV[0]]),
+                            (CP.lateralTuning.pid.kiBP, [CP.lateralTuning.pid.kiV[0]]),
                             k_f=CP.lateralTuning.pid.kf, pos_limit=1.0, sat_limit=CP.steerLimitTimer)
 
     self.pid = PIController((CP.lateralTuning.pid.kpBP, [self.highkpV]),
@@ -39,6 +40,18 @@ class LatControlPID():
     self.angle_steers_des = 0.
     self.increasing = False
     self.dualpids = True
+
+  def pidset(self, pid, descontrol, setpoint, measurement, feedforward):
+    error = float(setpoint - measurement)
+    p = error * pid._k_p[1][0]
+    f = feedforward * pid.k_f
+    i = descontrol - p - f
+    pid.p = p
+    pid.i = i
+    pid.f = f
+    pid.sat_count = 0.0
+    pid.saturated = False
+    pid.control = descontrol
 
   def update(self, active, CS, CP, path_plan):
     pid_log = log.ControlsState.LateralPIDState.new_message()
@@ -84,25 +97,26 @@ class LatControlPID():
                                         feedforward=steer_feedforward, speed=CS.vEgo, deadzone=deadzone)
           output_steer = raw_low_output_steer * self.factor
           if abs(output_steer) > (self.factor * 0.99):
-            self.pid.p = self.lowpid.p * self.factor
-            self.pid.i = self.lowpid.i * self.factor
-            self.pid.f = self.lowpid.f * self.factor
-            self.pid.sat_count = 0.0
-            self.pid.saturated = False
-            self.pid.control = self.lowpid.control * self.factor
+            self.pidset(self.pid, output_steer, self.angle_steers_des, CS.steeringAngle,steer_feedforward)
+            #self.pid.p = self.lowpid.p * self.factor
+            #self.pid.i = self.lowpid.i * self.factor
+            #self.pid.f = self.lowpid.f * self.factor
+            #self.pid.sat_count = 0.0
+            #self.pid.saturated = False
+            #self.pid.control = self.lowpid.control * self.factor
 
             self.increasing = True
         else:
           output_steer = self.pid.update(self.angle_steers_des, CS.steeringAngle, check_saturation=check_saturation, override=CS.steeringPressed,
                                         feedforward=steer_feedforward, speed=CS.vEgo, deadzone=deadzone)
-
           if abs(output_steer) < (self.factor * 0.1) and abs(CS.steeringAngle) < 3:
-            self.lowpid.p = self.pid.p / self.factor
-            self.lowpid.i = self.pid.i / self.factor
-            self.lowpid.f = self.pid.f / self.factor
-            self.lowpid.sat_count = 0.0
-            self.lowpid.saturated = False
-            self.lowpid.control = self.pid.control / self.factor
+            self.pidset(self.lowpid, output_steer, self.angle_steers_des, CS.steeringAngle,steer_feedforward)
+            #self.lowpid.p = self.pid.p / self.factor
+            self.lowpid.i = 0
+            #self.lowpid.f = self.pid.f / self.factor
+            #self.lowpid.sat_count = 0.0
+            #self.lowpid.saturated = False
+            #self.lowpid.control = self.pid.control / self.factor
 
             self.increasing = False
       pid_log.active = True
