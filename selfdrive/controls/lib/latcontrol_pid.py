@@ -96,6 +96,7 @@ class LatControlPID():
           raw_low_output_steer = self.lowpid.update(self.angle_steers_des, CS.steeringAngle, check_saturation=check_saturation, override=CS.steeringPressed,
                                         feedforward=steer_feedforward, speed=CS.vEgo, deadzone=deadzone)
           output_steer = raw_low_output_steer * self.factor
+          #print("Lo - " + str(output_steer))
           if abs(output_steer) > (self.factor * 0.99):
             self.pidset(self.pid, output_steer, self.angle_steers_des, CS.steeringAngle,steer_feedforward)
             #self.pid.p = self.lowpid.p * self.factor
@@ -109,10 +110,11 @@ class LatControlPID():
         else:
           output_steer = self.pid.update(self.angle_steers_des, CS.steeringAngle, check_saturation=check_saturation, override=CS.steeringPressed,
                                         feedforward=steer_feedforward, speed=CS.vEgo, deadzone=deadzone)
+          #print("Hi - " + str(output_steer))
           if abs(output_steer) < (self.factor * 0.1) and abs(CS.steeringAngle) < 3:
-            self.pidset(self.lowpid, output_steer, self.angle_steers_des, CS.steeringAngle,steer_feedforward)
+            self.pidset(self.lowpid, (output_steer / self.factor), self.angle_steers_des, CS.steeringAngle,steer_feedforward)
             #self.lowpid.p = self.pid.p / self.factor
-            self.lowpid.i = 0
+            #self.lowpid.i = 0
             #self.lowpid.f = self.pid.f / self.factor
             #self.lowpid.sat_count = 0.0
             #self.lowpid.saturated = False
