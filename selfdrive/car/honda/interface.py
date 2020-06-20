@@ -268,7 +268,7 @@ class CarInterface(CarInterfaceBase):
         ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.64, 0.3], [0.192, 0.1]]
         ret.lateralTuning.pid.kf = 0.00004 # for less wobble
       else:
-        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2560], [0, 2560]]
+        ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 3840], [0, 3840]]
         ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.64], [0.192]]
         ret.lateralTuning.pid.kf = 0.00006 # conservative feed-forward
       tire_stiffness_factor = 0.67
